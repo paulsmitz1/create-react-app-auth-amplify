@@ -22,6 +22,14 @@
   color: #61dafb;
 }
 
+video {
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  position: fixed;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
