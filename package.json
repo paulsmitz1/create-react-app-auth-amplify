@@ -1,4 +1,7 @@
 {
+  "name": "notes",
+  "version": "0.1.0",
+  "private": true,
   "dependencies": {
     "react-native-aws-ivs-player-view": "^0.2.5"
   }
