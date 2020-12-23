@@ -1,36 +1,33 @@
 import React, { Component } from 'react';
 import './App.css';
 import { withAuthenticator } from 'aws-amplify-react'
-import Amplify, { Auth } from 'aws-amplify';
-import aws_exports from './aws-exports';
-import PlayerView from "react-native-aws-ivs-player-view";
+import 'video.js'
+import Amplify from "@aws-amplify/core";
 
-Amplify.configure(aws_exports);
+Amplify.configure();
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <PlayerView
-            style={styles.player}
-            ref={(e: any) => {
-              this.player = e;
-            }}
-        />
-        <Button
-            onPress={() => {
-              this.player.pause();
-            }}
-            title="Pause"
-        />
-        <Button
-            onPress={() => {
-              this.player.load(
-                  'https://fcc3ddae59ed.us-west-2.playback.live-video.net/api/video/v1/us-west-2.893648527354.channel.DmumNckWFTqz.m3u8'
-              );
-            }}
-            title="Play Me"
-        />
+          <video
+              id="my-player"
+              className="video-js"
+              controls
+              preload="auto"
+              poster="//vjs.zencdn.net/v/oceans.png"
+              data-setup='{}'>
+              <source src="'https://fcc3ddae59ed.us-west-2.playback.live-video.net/api/video/v1/us-west-2.893648527354.channel.DmumNckWFTqz.m3u8'"></source>
+              <p className="vjs-no-js">
+                  To view this video please enable JavaScript, and consider upgrading to a
+                  web browser that
+                  <a href="https://videojs.com/html5-video-support/" target="_blank">
+                      supports HTML5 video
+                  </a>
+              </p>
+          </video>
+
+
       </div>
     );
   }
