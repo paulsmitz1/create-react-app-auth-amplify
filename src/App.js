@@ -3,8 +3,9 @@ import './App.css';
 import { withAuthenticator } from 'aws-amplify-react'
 import 'video.js'
 import Amplify from "@aws-amplify/core";
+import aws_exports from './aws-exports';
 
-Amplify.configure();
+Amplify.configure(aws_exports);
 
 class App extends Component {
   render() {
