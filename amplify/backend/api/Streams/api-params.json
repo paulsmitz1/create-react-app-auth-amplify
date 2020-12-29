@@ -1,0 +1,42 @@
+{
+    "paths": [
+        {
+            "name": "/Streams",
+            "lambdaFunction": "streams",
+            "privacy": {
+                "private": true,
+                "auth": [
+                    "/POST",
+                    "/GET",
+                    "/PUT",
+                    "/PATCH",
+                    "/DELETE"
+                ]
+            },
+            "policyResourceName": "/Streams"
+        }
+    ],
+    "resourceName": "Streams",
+    "apiName": "Streams",
+    "functionArns": [
+        {
+            "lambdaFunction": "streams"
+        }
+    ],
+    "privacy": {
+        "auth": 1,
+        "unauth": 0,
+        "authRoleName": "amplify-authcra-dev-163818-authRole",
+        "unAuthRoleName": "amplify-authcra-dev-163818-unauthRole"
+    },
+    "dependsOn": [
+        {
+            "category": "function",
+            "resourceName": "streams",
+            "attributes": [
+                "Name",
+                "Arn"
+            ]
+        }
+    ]
+}
