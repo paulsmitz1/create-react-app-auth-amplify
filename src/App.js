@@ -1,24 +1,31 @@
 import React, { Component } from 'react';
 import './App.css';
 import { withAuthenticator } from 'aws-amplify-react'
-import 'video.js'
 import Amplify from "@aws-amplify/core";
 import aws_exports from './aws-exports';
+import $ from 'jquery';
+import awsvideoconfig from "./aws-video-exports";
+import awsmobile from "./aws-exports";
 
 Amplify.configure(aws_exports);
 
+let theStreams = [ "https://d2zihajmogu5jn.cloudfront.net/bipbop-advanced/bipbop_16x9_variant.m3u8", awsvideoconfig.awsOutputLiveLL ];
+
 class App extends Component {
-  render() {
-    return (
+
+    render() {
+
+      return (
       <div className="App">
           <video
-              id="my-player"
-              className="video-js"
-              controls
+              id="myplayer"
+              className="video"
               preload="auto"
-              poster="//vjs.zencdn.net/v/oceans.png"
-              data-setup='{}'>
-              <source src="'https://fcc3ddae59ed.us-west-2.playback.live-video.net/api/video/v1/us-west-2.893648527354.channel.DmumNckWFTqz.m3u8'"></source>
+              data-setup='{}'
+              autoPlay={true}
+              controls>
+              <source src={ theStreams[0] }
+                  type="application/x-mpegURL" />
               <p className="vjs-no-js">
                   To view this video please enable JavaScript, and consider upgrading to a
                   web browser that
@@ -27,10 +34,18 @@ class App extends Component {
                   </a>
               </p>
           </video>
-
-
       </div>
     );
+
+  }
+  componentDidMount() {
+      this.setState({ streams : theStreams});
+      this.getStreams();
+  }
+
+    getStreams(){
+      $.getJSON(awsmobile.aws_cloud_logic_custom.find( Name => "Streams").endpoint + "/streams")
+          .then(({ results }) => this.setState({ person: results }))
   }
 }
 
