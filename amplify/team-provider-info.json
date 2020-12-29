@@ -1,97 +1,15 @@
 {
-  "dev": {
-    "awscloudformation": {
-      "AuthRoleName": "amplify-authcra-dev-163818-authRole",
-      "UnauthRoleArn": "arn:aws:iam::569327773807:role/amplify-authcra-dev-163818-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::569327773807:role/amplify-authcra-dev-163818-authRole",
-      "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-authcra-dev-163818-deployment",
-      "UnauthRoleName": "amplify-authcra-dev-163818-unauthRole",
-      "StackName": "amplify-authcra-dev-163818",
-      "StackId": "arn:aws:cloudformation:us-east-1:569327773807:stack/amplify-authcra-dev-163818/456153a0-453d-11eb-afe8-12ab4fab6419",
-      "AmplifyAppId": "d2ax4ahicnk622"
-    },
-    "categories": {
-      "auth": {
-        "authcrae568e4a3": {}
-      }
-    }
-  },
-  "videotest": {
-    "awscloudformation": {
-      "AuthRoleName": "amplify-authcra-videotest-104748-authRole",
-      "UnauthRoleArn": "arn:aws:iam::569327773807:role/amplify-authcra-videotest-104748-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::569327773807:role/amplify-authcra-videotest-104748-authRole",
-      "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-authcra-videotest-104748-deployment",
-      "UnauthRoleName": "amplify-authcra-videotest-104748-unauthRole",
-      "StackName": "amplify-authcra-videotest-104748",
-      "StackId": "arn:aws:cloudformation:us-east-1:569327773807:stack/amplify-authcra-videotest-104748/4cdb1a50-49c3-11eb-b1f1-0e5c31da0605",
-      "AmplifyAppId": "d2lhu137ipsjt3"
-    },
-    "categories": {
-      "auth": {
-        "authcrae568e4a3": {}
-      },
-      "function": {
-        "streams": {}
-      }
-    }
-  },
   "develop": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-authcra-develop-105434-authRole",
-      "UnauthRoleArn": "arn:aws:iam::569327773807:role/amplify-authcra-develop-105434-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::569327773807:role/amplify-authcra-develop-105434-authRole",
+      "AuthRoleName": "amplify-testvideo-develop-153604-authRole",
+      "UnauthRoleArn": "arn:aws:iam::569327773807:role/amplify-testvideo-develop-153604-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::569327773807:role/amplify-testvideo-develop-153604-authRole",
       "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-authcra-develop-105434-deployment",
-      "UnauthRoleName": "amplify-authcra-develop-105434-unauthRole",
-      "StackName": "amplify-authcra-develop-105434",
-      "StackId": "arn:aws:cloudformation:us-east-1:569327773807:stack/amplify-authcra-develop-105434/3dc4fdf0-49c4-11eb-86be-0a7ca815d66b",
-      "AmplifyAppId": "d2lhu137ipsjt3"
-    },
-    "categories": {
-      "auth": {
-        "authcrae568e4a3": {}
-      },
-      "function": {
-        "streams": {}
-      },
-      "hosting": {
-        "amplifyhosting": {
-          "appId": "d2lhu137ipsjt3",
-          "type": "cicd"
-        }
-      }
-    }
-  },
-  "testenv": {
-    "awscloudformation": {
-      "AuthRoleName": "amplify-authcra-testenv-140759-authRole",
-      "UnauthRoleArn": "arn:aws:iam::569327773807:role/amplify-authcra-testenv-140759-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::569327773807:role/amplify-authcra-testenv-140759-authRole",
-      "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-authcra-testenv-140759-deployment",
-      "UnauthRoleName": "amplify-authcra-testenv-140759-unauthRole",
-      "StackName": "amplify-authcra-testenv-140759",
-      "StackId": "arn:aws:cloudformation:us-east-1:569327773807:stack/amplify-authcra-testenv-140759/4349d960-49df-11eb-be7d-123f2d95f4cf",
-      "AmplifyAppId": "d2lhu137ipsjt3"
-    },
-    "categories": {
-      "auth": {
-        "authcrae568e4a3": {}
-      },
-      "function": {
-        "streams": {},
-        "liststreams": {},
-        "Streams": {}
-      },
-      "hosting": {
-        "amplifyhosting": {
-          "appId": "d2lhu137ipsjt3",
-          "type": "cicd"
-        }
-      }
+      "DeploymentBucketName": "amplify-testvideo-develop-153604-deployment",
+      "UnauthRoleName": "amplify-testvideo-develop-153604-unauthRole",
+      "StackName": "amplify-testvideo-develop-153604",
+      "StackId": "arn:aws:cloudformation:us-east-1:569327773807:stack/amplify-testvideo-develop-153604/9231ede0-49eb-11eb-8099-0a1540e225b5",
+      "AmplifyAppId": "d1rcmnt5dy3fm3"
     }
   }
 }
