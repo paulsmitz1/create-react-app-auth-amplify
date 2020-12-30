@@ -36,5 +36,12 @@
       "dependsOn": [],
       "customAuth": false
     }
+  },
+  "video": {
+    "defaultStream": {
+      "service": "video",
+      "serviceType": "livestream",
+      "providerPlugin": "awscloudformation"
+    }
   }
 }
