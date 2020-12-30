@@ -1,0 +1,35 @@
+{
+    "paths": [
+        {
+            "name": "/streams",
+            "lambdaFunction": "streams",
+            "privacy": {
+                "open": true
+            },
+            "policyResourceName": "/streams"
+        }
+    ],
+    "resourceName": "streams",
+    "apiName": "streams",
+    "functionArns": [
+        {
+            "lambdaFunction": "streams"
+        }
+    ],
+    "privacy": {
+        "auth": 0,
+        "unauth": 0,
+        "authRoleName": "amplify-testvideo-develop-153604-authRole",
+        "unAuthRoleName": "amplify-testvideo-develop-153604-unauthRole"
+    },
+    "dependsOn": [
+        {
+            "category": "function",
+            "resourceName": "streams",
+            "attributes": [
+                "Name",
+                "Arn"
+            ]
+        }
+    ]
+}
