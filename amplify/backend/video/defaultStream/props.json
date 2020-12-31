@@ -23,8 +23,8 @@
     },
     "cloudFront": {
         "priceClass": "PriceClass_All",
-        "sBucketLogs": "logs",
-        "sLogPrefix": "cloudfront",
+        "sBucketLogs": "videoonamplifylogsbucket",
+        "sLogPrefix": "cf_logs/",
         "enableDistribution": "YES"
     }
 }

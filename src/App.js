@@ -8,7 +8,7 @@ import awsvideoconfig from "./aws-video-exports";
 import Auth from "@aws-amplify/auth";
 import Select from 'react-select'
 
-let theStreams = [ "https://d2zihajmogu5jn.cloudfront.net/bipbop-advanced/bipbop_16x9_variant.m3u8", "http://demo.unified-streaming.com/video/tears-of-steel/tears-of-steel.ism/.m3u8", "https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8" ];
+let theStreams = [ "https://d2zihajmogu5jn.cloudfront.net/bipbop-advanced/bipbop_16x9_variant.m3u8", "http://demo.unified-streaming.com/video/tears-of-steel/tears-of-steel.ism/.m3u8", "https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8", awsvideoconfig.awsOutputLiveLL ];
 let options = [];
 let selectedStream = theStreams[0];
 

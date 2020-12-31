@@ -1,0 +1,38 @@
+{
+    "paths": [
+        {
+            "name": "/CreateStream",
+            "lambdaFunction": "CreateStreamFunction",
+            "privacy": {
+                "private": true,
+                "auth": [
+                    "/POST"
+                ]
+            },
+            "policyResourceName": "/CreateStream"
+        }
+    ],
+    "resourceName": "CreateStream",
+    "apiName": "CreateStream",
+    "functionArns": [
+        {
+            "lambdaFunction": "CreateStreamFunction"
+        }
+    ],
+    "privacy": {
+        "auth": 1,
+        "unauth": 0,
+        "authRoleName": "amplify-testvideo-develop-153604-authRole",
+        "unAuthRoleName": "amplify-testvideo-develop-153604-unauthRole"
+    },
+    "dependsOn": [
+        {
+            "category": "function",
+            "resourceName": "CreateStreamFunction",
+            "attributes": [
+                "Name",
+                "Arn"
+            ]
+        }
+    ]
+}
