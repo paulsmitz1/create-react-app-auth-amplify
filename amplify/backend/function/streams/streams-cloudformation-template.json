@@ -69,7 +69,7 @@
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-testvideo-develop-153604-deployment",
-          "S3Key": "amplify-builds/streams-61643251506536635253-build.zip"
+          "S3Key": "amplify-builds/streams-4465336a626d596b4c77-build.zip"
         }
       }
     },
@@ -155,7 +155,8 @@
               "Effect": "Allow",
               "Action": [
                 "mediapackage:ListChannels",
-                "mediapackage:ListChannels"
+                "mediapackage:ListOriginEndpoints",
+                "mediapackage:ListTags"
               ],
               "Resource": "*"
             }

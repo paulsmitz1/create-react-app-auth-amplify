@@ -3,17 +3,17 @@ import React, { Component } from 'react';
 import './App.css';
 import { withAuthenticator } from 'aws-amplify-react'
 import Amplify, { API } from 'aws-amplify';
-import awsconfig from './aws-exports';
-import awsvideoconfig from "./aws-video-exports";
+import awsConfig from './aws-exports';
+import awsVideoConfig from "./aws-video-exports";
 import Auth from "@aws-amplify/auth";
 import Select from 'react-select'
 
-let theStreams = [ "https://d2zihajmogu5jn.cloudfront.net/bipbop-advanced/bipbop_16x9_variant.m3u8", "http://demo.unified-streaming.com/video/tears-of-steel/tears-of-steel.ism/.m3u8", "https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8", awsvideoconfig.awsOutputLiveLL ];
+let theStreams = [ "https://d2zihajmogu5jn.cloudfront.net/bipbop-advanced/bipbop_16x9_variant.m3u8", "http://demo.unified-streaming.com/video/tears-of-steel/tears-of-steel.ism/.m3u8", "https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8", awsVideoConfig.awsOutputLiveHLS ];
 let options = [];
 let selectedStream = theStreams[0];
 
 //Configure
-Amplify.configure(awsconfig);
+Amplify.configure(awsConfig);
 
 //Components
 
@@ -51,19 +51,20 @@ class App extends Component {
         // event.persist(); //THE MAIN LINE THAT WILL SET THE VALUE
         console.log("changed to " + event.value);
         selectedStream = event.value
-        var video = document.getElementById('myplayer');
-        var source = document.getElementById('source');
+        let video = document.getElementById('myplayer');
+        let source = document.getElementById('source');
         video.pause();
         source.setAttribute('src',  selectedStream);
         video.load();
         video.play();
     }
 
-    componentDidMount() {
-      this.setState({ streams : theStreams});
-      this.getStreams();
-      this.createOptions();
-  }
+    async componentDidMount() {
+        this.setState({streams: theStreams});
+        let streams = await this.getStreams();
+        console.log(JSON.stringify(streams));
+        this.createOptions();
+    }
 
   createOptions(){
       options = [];
@@ -77,15 +78,15 @@ class App extends Component {
   }
 
     async getStreams() {
-        const apiName = 'Streams';
-        const path = '/Streams';
+        const apiName = 'streams';
+        const path = '/streams';
         const myInit = {
             headers: {
                 //Authorization: `Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}`,
             },
         };
 
-        return await API.get(apiName, path, myInit);
+        return API.get(apiName, path, myInit);
     }
 }
 
