@@ -68,7 +68,7 @@
         "Layers": [],
         "Timeout": "25",
         "Code": {
-          "S3Bucket": "amplify-testvideo-develop-153604-deployment",
+          "S3Bucket": "amplify-testvideo-developtwo-172933-deployment",
           "S3Key": "amplify-builds/StreamsFunction-4d425030374870617774-build.zip"
         }
       }
