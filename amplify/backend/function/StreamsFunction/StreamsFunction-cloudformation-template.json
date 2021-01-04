@@ -33,12 +33,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "streams",
+            "StreamsFunction",
             {
               "Fn::Join": [
                 "",
                 [
-                  "streams",
+                  "StreamsFunction",
                   "-",
                   {
                     "Ref": "env"
@@ -69,7 +69,7 @@
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-testvideo-develop-153604-deployment",
-          "S3Key": "amplify-builds/streams-4465336a626d596b4c77-build.zip"
+          "S3Key": "amplify-builds/StreamsFunction-4d425030374870617774-build.zip"
         }
       }
     },
@@ -79,12 +79,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "testvideoLambdaRole897dff2e",
+            "testvideoLambdaRole21590a43",
             {
               "Fn::Join": [
                 "",
                 [
-                  "testvideoLambdaRole897dff2e",
+                  "testvideoLambdaRole21590a43",
                   "-",
                   {
                     "Ref": "env"

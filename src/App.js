@@ -78,8 +78,8 @@ class App extends Component {
   }
 
     async getStreams() {
-        const apiName = 'streams';
-        const path = '/streams';
+        const apiName = 'Streams';
+        const path = '/Streams';
         const myInit = {
             headers: {
                 //Authorization: `Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}`,

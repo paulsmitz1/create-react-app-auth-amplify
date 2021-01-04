@@ -1,3 +1,8 @@
+/* Amplify Params - DO NOT EDIT
+	ENV
+	REGION
+Amplify Params - DO NOT EDIT */
+
 //
 // This lambda should:
 // Inputs:
@@ -31,9 +36,9 @@ exports.handler = async (event) => {
 
     let AWS = require("aws-sdk");
     let params =
-    {
-        MaxResults: 50,
-    };
+        {
+            MaxResults: 50,
+        };
     let mediaPackage = new AWS.MediaPackage();
     let error = null;
     let responseData = null;
@@ -104,9 +109,9 @@ function parseResponse(responseData) {
         });
         console.log("current Stream === " + JSON.stringify(currentStream));
         if (currentStream.length === 0) {
-           currentStream = {
-               "StreamName": currentObject.ChannelId,
-               "StreamSources": [],
+            currentStream = {
+                "StreamName": currentObject.ChannelId,
+                "StreamSources": [],
             };
             response.push(currentStream);
         }else{

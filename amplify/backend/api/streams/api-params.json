@@ -1,19 +1,19 @@
 {
     "paths": [
         {
-            "name": "/streams",
-            "lambdaFunction": "streams",
+            "name": "/Streams",
+            "lambdaFunction": "StreamsFunction",
             "privacy": {
                 "open": true
             },
-            "policyResourceName": "/streams"
+            "policyResourceName": "/Streams"
         }
     ],
-    "resourceName": "streams",
-    "apiName": "streams",
+    "resourceName": "Streams",
+    "apiName": "Streams",
     "functionArns": [
         {
-            "lambdaFunction": "streams"
+            "lambdaFunction": "StreamsFunction"
         }
     ],
     "privacy": {
@@ -25,7 +25,7 @@
     "dependsOn": [
         {
             "category": "function",
-            "resourceName": "streams",
+            "resourceName": "StreamsFunction",
             "attributes": [
                 "Name",
                 "Arn"

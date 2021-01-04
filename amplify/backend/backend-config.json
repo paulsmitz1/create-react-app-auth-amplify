@@ -7,32 +7,19 @@
     }
   },
   "function": {
-    "streams": {
-      "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    },
     "CreateStreamFunction": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
+    },
+    "StreamsFunction": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "dependsOn": []
     }
   },
   "api": {
-    "streams": {
-      "service": "API Gateway",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": [
-        {
-          "category": "function",
-          "resourceName": "streams",
-          "attributes": [
-            "Name",
-            "Arn"
-          ]
-        }
-      ]
-    },
     "CreateStream": {
       "service": "API Gateway",
       "providerPlugin": "awscloudformation",
@@ -40,6 +27,20 @@
         {
           "category": "function",
           "resourceName": "CreateStreamFunction",
+          "attributes": [
+            "Name",
+            "Arn"
+          ]
+        }
+      ]
+    },
+    "Streams": {
+      "service": "API Gateway",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [
+        {
+          "category": "function",
+          "resourceName": "StreamsFunction",
           "attributes": [
             "Name",
             "Arn"

@@ -14,15 +14,15 @@
         },
     
     
-          "functionstreamsName": {
+          "functionStreamsFunctionName": {
             "Type": "String",
-            "Default": "functionstreamsName"
+            "Default": "functionStreamsFunctionName"
           },
         
           
-          "functionstreamsArn": {
+          "functionStreamsFunctionArn": {
             "Type": "String",
-            "Default": "functionstreamsArn"
+            "Default": "functionStreamsFunctionArn"
           }
         
           
@@ -45,16 +45,16 @@
         
         
         
-      "streams": {
+      "Streams": {
         "Type": "AWS::ApiGateway::RestApi",
         "Properties": {
           "Description": "",
-          "Name": "streams",
+          "Name": "Streams",
           "Body": {
             "swagger": "2.0",
             "info": {
               "version": "2018-05-24T17:52:00Z",
-              "title": "streams"
+              "title": "Streams"
             },
             "host": {
                 "Fn::Join": [
@@ -90,7 +90,7 @@
             ],
             "paths": {
               
-              "/streams": {
+              "/Streams": {
                 "options": {
                   "consumes": [
                     "application/json"
@@ -176,7 +176,7 @@
                             
                             {
                                 
-                                "Ref": "functionstreamsArn"
+                                "Ref": "functionStreamsFunctionArn"
                             },
                             
                             "/invocations"
@@ -189,7 +189,7 @@
                   }
                 }
               },
-              "/streams/{proxy+}": {
+              "/Streams/{proxy+}": {
                 "options": {
                   "consumes": [
                     "application/json"
@@ -275,7 +275,7 @@
                           
                           {
                             
-                            "Ref": "functionstreamsArn"
+                            "Ref": "functionStreamsFunctionArn"
                           },
                           
                           "/invocations"
@@ -332,12 +332,12 @@
                   
         
         
-        "functionstreamsPermissionstreams": {
+        "functionStreamsFunctionPermissionStreams": {
             "Type": "AWS::Lambda::Permission",
             "Properties": {
                 "FunctionName": 
                     {
-                        "Ref":  "functionstreamsName"
+                        "Ref":  "functionStreamsFunctionName"
                     },
                     
                     "Action": "lambda:InvokeFunction",
@@ -356,7 +356,7 @@
                             },
                             ":",
                             {
-                                "Ref": "streams"
+                                "Ref": "Streams"
                             },
                             "/*/*/*"
                         ]
@@ -367,7 +367,7 @@
         
         
         
-      "DeploymentAPIGWstreams": {
+      "DeploymentAPIGWStreams": {
         "Type": "AWS::ApiGateway::Deployment",
         "Properties": {
           "Description": "The Development stage deployment of your API.",
@@ -381,7 +381,7 @@
             ]
           },
           "RestApiId": {
-            "Ref": "streams"
+            "Ref": "Streams"
           }
         }
       }
@@ -389,15 +389,15 @@
     "Outputs": {
         "RootUrl": {
             "Description": "Root URL of the API gateway",
-            "Value": {"Fn::Join": ["", ["https://", {"Ref": "streams"}, ".execute-api.", {"Ref": "AWS::Region"}, ".amazonaws.com/", {"Fn::If": ["ShouldNotCreateEnvResources","Prod", {"Ref": "env"} ]}]]}
+            "Value": {"Fn::Join": ["", ["https://", {"Ref": "Streams"}, ".execute-api.", {"Ref": "AWS::Region"}, ".amazonaws.com/", {"Fn::If": ["ShouldNotCreateEnvResources","Prod", {"Ref": "env"} ]}]]}
         },
         "ApiName": {
           "Description": "API Friendly name",
-          "Value": "streams"
+          "Value": "Streams"
         },
         "ApiId": {
           "Description": "API ID (prefix of API URL)",
-          "Value": {"Ref": "streams"}
+          "Value": {"Ref": "Streams"}
         }
     }
   }
