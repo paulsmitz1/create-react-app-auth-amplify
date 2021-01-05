@@ -150,6 +150,15 @@
                   }
                 ]
               }
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "mediapackage:CreateChannel",
+                "medialive:CreateChannel",
+                "cloudfront:Create"
+              ],
+              "Resource": "*"
             }
           ]
         }

@@ -73,7 +73,7 @@ function http200(body) {
     return {
         statusCode: 200,
         headers: getHeaders(),
-        body: body
+        body: JSON.stringify(body)
     };
 }
 
@@ -81,7 +81,7 @@ function http400() {
     return {
         statusCode: 400,
         headers: getHeaders(),
-        body: error
+        body: JSON.stringify(error)
     };
 }
 function http500() {
