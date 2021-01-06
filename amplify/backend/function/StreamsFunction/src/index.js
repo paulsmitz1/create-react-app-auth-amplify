@@ -35,6 +35,7 @@ exports.handler = async (event) => {
     }
 
     let AWS = require("aws-sdk");
+    AWS.config.update({region:'us-east-1'});
     let params =
         {
             MaxResults: 50,
