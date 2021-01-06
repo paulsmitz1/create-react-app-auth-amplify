@@ -1,31 +1,134 @@
 
 
-
 exports.handler = async (event) => {
     if (event.method === "OPTIONS")
     {
         return http200({});
     }
     let channelName = event.name;
-    let mediaPackageParams = await createMediaPackageChannel(channelName);
+    let GUID = require("guid");
+    let guid = GUID.create();
+    let mediaPackageParams = await createMediaPackageChannel(channelName,guid);
     console.log("mediaPackageParams = " + JSON.stringify(mediaPackageParams));
     console.log("media package created");
-    await createEndpoints(mediaPackageParams.PackageID, mediaPackageParams.MediaPackage);
+    await createEndpoints(mediaPackageParams.PackageID, guid, mediaPackageParams.MediaPackage);
     console.log("media package endpoints created");
     let mediaPackageIngestEndpoints = mediaPackageParams.Response.HlsIngest.IngestEndpoints;
+    for (let i = 0; i <mediaPackageIngestEndpoints.length; i++) {
+        await storeStreamPasswordsInParameterStore(channelName, guid, i,mediaPackageIngestEndpoints);
+    }
 
-    await createMediaLiveChannel(channelName,mediaPackageIngestEndpoints);
+    let createSecurityGroup = await createInputSecurityGroup(channelName);
+
+    let createMediaLiveInputResponse =  await createMediaLiveInput(channelName,guid,createSecurityGroup);
+
+    await createMediaLiveChannel(channelName, guid, mediaPackageIngestEndpoints,createMediaLiveInputResponse);
     console.log("media live endpoints created");
 
     return http200({});
 };
 
+async function storeStreamPasswordsInParameterStore(channelName, guid, keyNumber, mediaPackageIngestEndpoints)
+{
+    let AWS = require("aws-sdk");
+    AWS.config.update({region: "us-east-1"});
+    let ParameterStore = new AWS.SSM();
+    let parameter = {
+        "DataType": "text",
+        "Description": channelName + guid + "-mediaPackage-Ingest-Key-" + keyNumber,
+        "Name": channelName + guid + "-mediaPackage-Ingest-Key-" + keyNumber,
+        "Tags": [{
+            "Key":"ChannelName",
+            "Value":channelName
+        }],
+        "Tier": "Standard",
+        "Type": "SecureString",
+        "Value": mediaPackageIngestEndpoints[keyNumber].Password
+    }
+    let promise = ParameterStore.putParameter(parameter).promise();
+    promise.then(
+        function (data) {
+            console.log("Create Parameter Response = " + JSON.stringify(data));
+        },
+        function (error)
+        {
 
-async function createMediaLiveChannel(channelName,mediaPackageIngestEndpoints) {
+        });
+    await promise;
+}
+
+async function createInputSecurityGroup(channelName) {
+    let AWS = require("aws-sdk");
+    AWS.config.update({region: "us-east-1"});
+    let mediaLive = new AWS.MediaLive();
+    let securityGroupRequest =
+    {
+        "WhitelistRules": [
+        {
+            "Cidr": "0.0.0.0/0"
+        }
+    ],
+        "Tags": {
+            "ChannelName": channelName
+        }
+    };
+    let response = null;
+    let promise = mediaLive.createInputSecurityGroup(securityGroupRequest).promise();
+    promise.then(
+        function (data) {
+            response = data;
+            console.log("Create MediaLiveInput Response = " + JSON.stringify(data));
+        },
+        function (error)
+        {
+
+        });
+    await promise;
+    return response;
+}
+
+async function createMediaLiveInput(channelName, guid, createSecurityGroupResponse){
     let AWS = require("aws-sdk");
     AWS.config.update({region: "us-east-1"});
 
-    let guid = require("guid");
+
+    let mediaLive = new AWS.MediaLive();
+    let createMediaLiveInputRequest = {
+        "Name": channelName + guid + "-input",
+        "RoleArn": "arn:aws:iam::569327773807:role/service-role/defaultStream-developtwo-medialive-access-role-us-east-1",
+        "InputSecurityGroups": [ createSecurityGroupResponse.SecurityGroup.Id ],
+        "Tags": {
+            "ChannelName": channelName
+        },
+        "Destinations": [
+            {
+                StreamName: channelName + guid + "-input-P"
+            },
+            {
+                StreamName: channelName + guid + "-input-B"
+            },
+        ],
+        "Type": "RTMP_PUSH",
+    };
+    console.log("createInputRequest = ", createMediaLiveInputRequest);
+    let response = null;
+    let promise = mediaLive.createInput(createMediaLiveInputRequest).promise();
+    promise.then(
+        function (data) {
+            response = data;
+            console.log("Create MediaLiveInput Response = " + JSON.stringify(data));
+        },
+        function (error)
+        {
+
+        });
+    await promise;
+    return response;
+}
+async function createMediaLiveChannel(channelName, guid,mediaPackageIngestEndpoints, createMediaLiveInputResponse) {
+    let AWS = require("aws-sdk");
+    AWS.config.update({region: "us-east-1"});
+
 
     let mediaLive = new AWS.MediaLive();
     console.log("Create Channel Request creating");
@@ -36,15 +139,15 @@ async function createMediaLiveChannel(channelName,mediaPackageIngestEndpoints) {
             "ChannelClass": "STANDARD",
             "Destinations": [
                 {
-                    "Id": channelName + guid.create(),
+                    "Id": channelName + guid,
                     "Settings": [
                         {
-                            "PasswordParam": mediaPackageIngestEndpoints[0].Password,
+                            "PasswordParam": channelName + guid + "-mediaPackage-Ingest-Key-0",
                             "Url": mediaPackageIngestEndpoints[0].Url,
                             "Username": mediaPackageIngestEndpoints[0].Username
                         },
                         {
-                            "PasswordParam": mediaPackageIngestEndpoints[1].Password,
+                            "PasswordParam": channelName + guid + "-mediaPackage-Ingest-Key-0",
                             "Url": mediaPackageIngestEndpoints[1].Url,
                             "Username": mediaPackageIngestEndpoints[1].Username
                         }
@@ -54,26 +157,26 @@ async function createMediaLiveChannel(channelName,mediaPackageIngestEndpoints) {
             ],
             "EncoderSettings": {
                 "AudioDescriptions": [
-                    {
-                        "AudioSelectorName": "audio-selector-1",
-                        "Name": "audio_128k",
-                        "AudioTypeControl": "FOLLOW_INPUT",
-                        "CodecSettings": {
-                            "AacSettings": {
-                                "Bitrate": 128000,
-                                "CodingMode": "CODING_MODE_2_0",
-                                "InputType": "NORMAL",
-                                "Profile": "LC",
-                                "RateControlMode": "CBR",
-                                "RawFormat": "NONE",
-                                "SampleRate": 48000,
-                                "Spec": "MPEG4"
-
-                            }
-                        },
-                        "LanguageCodeControl": "FOLLOW_INPUT"
-
-                    },
+                    // {
+                    //     "AudioSelectorName": "audio-selector-1",
+                    //     "Name": "audio_128k",
+                    //     "AudioTypeControl": "FOLLOW_INPUT",
+                    //     "CodecSettings": {
+                    //         "AacSettings": {
+                    //             "Bitrate": 128000,
+                    //             "CodingMode": "CODING_MODE_2_0",
+                    //             "InputType": "NORMAL",
+                    //             "Profile": "LC",
+                    //             "RateControlMode": "CBR",
+                    //             "RawFormat": "NONE",
+                    //             "SampleRate": 48000,
+                    //             "Spec": "MPEG4"
+                    //
+                    //         }
+                    //     },
+                    //     "LanguageCodeControl": "FOLLOW_INPUT"
+                    //
+                    // },
 
                 ],
                 "OutputGroups": [
@@ -81,7 +184,7 @@ async function createMediaLiveChannel(channelName,mediaPackageIngestEndpoints) {
                         "OutputGroupSettings": {
                             "HlsGroupSettings": {
                                 "Destination": {
-                                    "DestinationRefId": "destination-" + channelName
+                                    "DestinationRefId": channelName + guid,
                                 },
                                 "AdMarkers": [
                                     "ELEMENTAL_SCTE35"
@@ -124,10 +227,10 @@ async function createMediaLiveChannel(channelName,mediaPackageIngestEndpoints) {
                                     "OutputSettings": {
                                         "HlsOutputSettings": {
                                             "HlsSettings": {
-                                                "AudioOnlyHlsSettings": {
-                                                    "AudioTrackType": "ALTERNATE_AUDIO_NOT_AUTO_SELECT"
-
-                                                },
+                                                // "AudioOnlyHlsSettings": {
+                                                //     "AudioTrackType": "ALTERNATE_AUDIO_NOT_AUTO_SELECT"
+                                                //
+                                                // },
                                                 "StandardHlsSettings": {
                                                     "M3u8Settings": {
                                                         "AudioFramesPerPes": 4,
@@ -217,21 +320,21 @@ async function createMediaLiveChannel(channelName,mediaPackageIngestEndpoints) {
                     }
                 },
                 "CaptionDescriptions": [
-                    {
-                        "CaptionSelectorName": "caption-selector-1",
-                        "Name": "caption_webvtt",
-                        "DestinationSettings": {
-                            "WebvttDestinationSettings": {}
-                        },
-
-                    },
+                    // {
+                    //     "CaptionSelectorName": "caption-selector-1",
+                    //     "Name": "caption_webvtt",
+                    //     "DestinationSettings": {
+                    //         "WebvttDestinationSettings": {}
+                    //     },
+                    //
+                    // },
 
                 ],
 
             },
             "InputAttachments": [
                 {
-                    "InputId": "3686936",
+                    "InputId": createMediaLiveInputResponse.Input.Id,
                     "InputSettings": {
                         "AudioSelectors": [
                             {
@@ -299,13 +402,12 @@ async function createMediaLiveChannel(channelName,mediaPackageIngestEndpoints) {
 
 }
 //MediaPackage Channel
-async function createMediaPackageChannel(channelName) {
+async function createMediaPackageChannel(channelName, guid) {
     let AWS = require("aws-sdk");
     AWS.config.update({region:"us-east-1"});
-    let guid = require("guid");
 
     let mediaPackage = new AWS.MediaPackage();
-    let packageID = channelName + guid.create();
+    let packageID = channelName + guid;
     let createMediaPackageChannelRequest =
         {
             "Description": channelName,
@@ -334,15 +436,15 @@ async function createMediaPackageChannel(channelName) {
 
 
 //Endpoints
-async function createEndpoints(packageID, mediaPackage) {
+async function createEndpoints(packageID, guid, mediaPackage) {
     console.log("About to create DASH");
-    await createDashEndpoint(packageID, mediaPackage);
+    await createDashEndpoint(packageID, guid, mediaPackage);
     console.log("About to create HLS");
-    await createHLSEndpoint(packageID,mediaPackage);
+    await createHLSEndpoint(packageID, guid, mediaPackage);
     console.log("About to create CMAF");
-    await createCMAFEndpoint(packageID,mediaPackage);
+    await createCMAFEndpoint(packageID, guid, mediaPackage);
     console.log("About to create MSS");
-    await createMSSEndpoint(packageID,mediaPackage);
+    await createMSSEndpoint(packageID, guid, mediaPackage);
 
 }
 
@@ -360,11 +462,11 @@ async function originEndpointRequest(mediaPackage, createOriginEndpointRequest) 
     await promise;
 }
 
-async function createDashEndpoint(packageID, mediaPackage) {
+async function createDashEndpoint(packageID, guid, mediaPackage) {
     let createDashOriginEndpointRequest = {
-        "Id": packageID + "-dash",
+        "Id": packageID + guid + "-dash",
         "ChannelId": packageID,
-        "Description": packageID + "-dash",
+        "Description": packageID + guid + "-dash",
         "StartoverWindowSeconds": 86400,
         "TimeDelaySeconds": 0,
         "ManifestName": "index",
@@ -396,11 +498,11 @@ async function createDashEndpoint(packageID, mediaPackage) {
     };
     await originEndpointRequest(mediaPackage, createDashOriginEndpointRequest);
 }
-async function createHLSEndpoint(packageID, mediaPackage) {
+async function createHLSEndpoint(packageID, guid, mediaPackage) {
     let createHLSOriginEndpointRequest = {
-        "Id": packageID + "-hls",
+        "Id": packageID + guid + "-hls",
         "ChannelId": packageID,
-        "Description": packageID + "-hls",
+        "Description": packageID + guid + "-hls",
         "StartoverWindowSeconds": 86400,
         "TimeDelaySeconds": 0,
         "ManifestName": "index",
@@ -431,11 +533,11 @@ async function createHLSEndpoint(packageID, mediaPackage) {
     await originEndpointRequest(mediaPackage, createHLSOriginEndpointRequest);
 
 }
-async function createMSSEndpoint(packageID, mediaPackage) {
+async function createMSSEndpoint(packageID, guid, mediaPackage) {
     let createMSSOriginEndpointRequest = {
-        "Id": packageID + "-mss",
+        "Id": packageID + guid + "-mss",
         "ChannelId": packageID,
-        "Description": packageID + "-mss",
+        "Description": packageID + guid + "-mss",
         "StartoverWindowSeconds": 86400,
         "TimeDelaySeconds": 0,
         "ManifestName": "index",
@@ -452,11 +554,11 @@ async function createMSSEndpoint(packageID, mediaPackage) {
 
     await originEndpointRequest(mediaPackage, createMSSOriginEndpointRequest);
 }
-async function createCMAFEndpoint(packageID, mediaPackage) {
+async function createCMAFEndpoint(packageID, guid, mediaPackage) {
     let createCMAFOriginEndpointRequest = {
-        "Id": packageID + "-cmaf",
+        "Id": packageID + guid + "-cmaf",
         "ChannelId": packageID,
-        "Description": packageID + "-cmaf",
+        "Description": packageID + guid + "-cmaf",
         "StartoverWindowSeconds": 86400,
         "TimeDelaySeconds": 0,
         "ManifestName": "index",
@@ -488,7 +590,6 @@ async function createCMAFEndpoint(packageID, mediaPackage) {
         "Origination": "ALLOW"
     };
     await originEndpointRequest(mediaPackage, createCMAFOriginEndpointRequest);
-
 }
 
 
