@@ -14,18 +14,15 @@ exports.handler = async (event) => {
     await createEndpoints(mediaPackageParams.PackageID, guid, mediaPackageParams.MediaPackage);
     console.log("media package endpoints created");
     let mediaPackageIngestEndpoints = mediaPackageParams.Response.HlsIngest.IngestEndpoints;
-    for (let i = 0; i <mediaPackageIngestEndpoints.length; i++) {
+    for (let i = 0; i < mediaPackageIngestEndpoints.length; i++) {
         await storeStreamPasswordsInParameterStore(channelName, guid, i,mediaPackageIngestEndpoints);
     }
-
-    let createSecurityGroup = await createInputSecurityGroup(channelName);
-
-    let createMediaLiveInputResponse =  await createMediaLiveInput(channelName,guid,createSecurityGroup);
-
+    let listSecurityGroupResponse = await listInputSecurityGroup();
+    let createMediaLiveInputResponse =  await createMediaLiveInput(channelName,guid,listSecurityGroupResponse);
     await createMediaLiveChannel(channelName, guid, mediaPackageIngestEndpoints,createMediaLiveInputResponse);
     console.log("media live endpoints created");
 
-    return http200({});
+    return http200({ "createMediaLiveInputResponse" : createMediaLiveInputResponse });
 };
 
 async function storeStreamPasswordsInParameterStore(channelName, guid, keyNumber, mediaPackageIngestEndpoints)
@@ -57,27 +54,16 @@ async function storeStreamPasswordsInParameterStore(channelName, guid, keyNumber
     await promise;
 }
 
-async function createInputSecurityGroup(channelName) {
+async function listInputSecurityGroup() {
     let AWS = require("aws-sdk");
     AWS.config.update({region: "us-east-1"});
     let mediaLive = new AWS.MediaLive();
-    let securityGroupRequest =
-    {
-        "WhitelistRules": [
-        {
-            "Cidr": "0.0.0.0/0"
-        }
-    ],
-        "Tags": {
-            "ChannelName": channelName
-        }
-    };
     let response = null;
-    let promise = mediaLive.createInputSecurityGroup(securityGroupRequest).promise();
+    let promise = mediaLive.listInputSecurityGroups().promise();//.listInputSecurityGroup(securityGroupRequest).promise();
     promise.then(
         function (data) {
             response = data;
-            console.log("Create MediaLiveInput Response = " + JSON.stringify(data));
+            console.log("List SecurityGroup Response = " + JSON.stringify(data));
         },
         function (error)
         {
@@ -87,7 +73,7 @@ async function createInputSecurityGroup(channelName) {
     return response;
 }
 
-async function createMediaLiveInput(channelName, guid, createSecurityGroupResponse){
+async function createMediaLiveInput(channelName, guid, listSecurityGroupsResponse){
     let AWS = require("aws-sdk");
     AWS.config.update({region: "us-east-1"});
 
@@ -96,7 +82,7 @@ async function createMediaLiveInput(channelName, guid, createSecurityGroupRespon
     let createMediaLiveInputRequest = {
         "Name": channelName + guid + "-input",
         "RoleArn": "arn:aws:iam::569327773807:role/service-role/defaultStream-developtwo-medialive-access-role-us-east-1",
-        "InputSecurityGroups": [ createSecurityGroupResponse.SecurityGroup.Id ],
+        "InputSecurityGroups": [ listSecurityGroupsResponse.InputSecurityGroups[0].Id ],
         "Tags": {
             "ChannelName": channelName
         },

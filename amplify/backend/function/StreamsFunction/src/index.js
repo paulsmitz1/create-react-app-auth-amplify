@@ -123,10 +123,10 @@ function parseResponse(responseData) {
         console.log("cmafPackage = " + JSON.stringify(currentObject.CmafPackage));
         // console.log("currentStream.CmafPackage.HlsManifests.Url = " + JSON.stringify(currentStream.CmafPackage.HlsManifests.Url));
         console.log("currentStream.Url = " + JSON.stringify(currentObject.Url));
-        console.log("url = " + JSON.stringify(currentObject.CmafPackage ? currentObject.CmafPackage.HlsManifests.Url : currentObject.Url));
+        console.log("url = " + JSON.stringify(currentObject.CmafPackage ? currentObject.CmafPackage.HlsManifests[0].Url : currentObject.Url));
 
         let streamSource = {
-            "StreamURL": currentObject.CmafPackage ? currentObject.CmafPackage.HlsManifests.Url : currentObject.Url,
+            "StreamURL": currentObject.CmafPackage ? currentObject.CmafPackage.HlsManifests[0].Url : currentObject.Url,
         };
         console.log("streamSource = " + JSON.stringify(streamSource));
         currentStream.StreamSources.push(streamSource);

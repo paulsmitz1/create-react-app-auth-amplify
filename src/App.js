@@ -156,7 +156,7 @@ constructor() {
             console.log(JSON.stringify(result));
             theStreams = result;
             this.setState({theStreams: result});
-            this.createOptions();
+    //        this.createOptions();
         });
     }
 
