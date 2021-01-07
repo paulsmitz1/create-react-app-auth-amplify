@@ -108,8 +108,9 @@ constructor() {
         selectedStream = event.value
         let video = document.getElementById('myplayer');
         video.pause();
+        video.innerHTML = "";
         event.value.StreamSources.forEach(source => {
-            video.innerHTML = "<source src=" + source.StreamURL + " />";
+            video.innerHTML = video.innerHTML + "<source src=" + source.StreamURL + " />";
         });
         video.load();
         video.play();
@@ -156,7 +157,7 @@ constructor() {
             console.log(JSON.stringify(result));
             theStreams = result;
             this.setState({theStreams: result});
-    //        this.createOptions();
+            this.createOptions();
         });
     }
 
