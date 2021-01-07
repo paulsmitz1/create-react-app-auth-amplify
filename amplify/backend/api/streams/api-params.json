@@ -5,8 +5,7 @@
             "lambdaFunction": "StreamsFunction",
             "privacy": {
                 "open": true
-            },
-            "policyResourceName": "/Streams"
+            }
         }
     ],
     "resourceName": "Streams",
@@ -19,8 +18,8 @@
     "privacy": {
         "auth": 0,
         "unauth": 0,
-        "authRoleName": "amplify-testvideo-develop-153604-authRole",
-        "unAuthRoleName": "amplify-testvideo-develop-153604-unauthRole"
+        "authRoleName": "amplify-testvideo-developtwo-172933-authRole",
+        "unAuthRoleName": "amplify-testvideo-developtwo-172933-unauthRole"
     },
     "dependsOn": [
         {
@@ -31,5 +30,6 @@
                 "Arn"
             ]
         }
-    ]
+    ],
+    "uuid": "d5b99041"
 }

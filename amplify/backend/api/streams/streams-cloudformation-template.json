@@ -367,7 +367,7 @@
         
         
         
-      "DeploymentAPIGWStreams": {
+      "DeploymentAPIGWStreamsd5b99041": {
         "Type": "AWS::ApiGateway::Deployment",
         "Properties": {
           "Description": "The Development stage deployment of your API.",
