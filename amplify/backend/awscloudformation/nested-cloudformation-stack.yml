@@ -86,6 +86,21 @@
         }
       }
     },
+    "functionAdminQueriesf4582423": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "TemplateURL": "https://s3.amazonaws.com/amplify-testvideo-developtwo-172933-deployment/amplify-cfn-templates/function/AdminQueriesf4582423-cloudformation-template.json",
+        "Parameters": {
+          "authtestvideo8c8dc8a8UserPoolId": {
+            "Fn::GetAtt": [
+              "authtestvideo8c8dc8a8",
+              "Outputs.UserPoolId"
+            ]
+          },
+          "env": "developtwo"
+        }
+      }
+    },
     "apiCreateStream": {
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
@@ -140,17 +155,50 @@
         }
       }
     },
+    "apiAdminQueries": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "TemplateURL": "https://s3.amazonaws.com/amplify-testvideo-developtwo-172933-deployment/amplify-cfn-templates/api/admin-queries-cloudformation-template.json",
+        "Parameters": {
+          "authRoleName": {
+            "Ref": "AuthRoleName"
+          },
+          "unauthRoleName": {
+            "Ref": "UnauthRoleName"
+          },
+          "authtestvideo8c8dc8a8UserPoolId": {
+            "Fn::GetAtt": [
+              "authtestvideo8c8dc8a8",
+              "Outputs.UserPoolId"
+            ]
+          },
+          "functionAdminQueriesf4582423Arn": {
+            "Fn::GetAtt": [
+              "functionAdminQueriesf4582423",
+              "Outputs.Arn"
+            ]
+          },
+          "functionAdminQueriesf4582423Name": {
+            "Fn::GetAtt": [
+              "functionAdminQueriesf4582423",
+              "Outputs.Name"
+            ]
+          },
+          "env": "developtwo"
+        }
+      }
+    },
     "authtestvideo8c8dc8a8": {
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
         "TemplateURL": "https://s3.amazonaws.com/amplify-testvideo-developtwo-172933-deployment/amplify-cfn-templates/auth/testvideo8c8dc8a8-cloudformation-template.yml",
         "Parameters": {
           "identityPoolName": "testvideo8c8dc8a8_identitypool_8c8dc8a8",
-          "allowUnauthenticatedIdentities": false,
+          "allowUnauthenticatedIdentities": true,
           "resourceNameTruncated": "testvi8c8dc8a8",
           "userPoolName": "testvideo8c8dc8a8_userpool_8c8dc8a8",
           "autoVerifiedAttributes": "email",
-          "mfaConfiguration": "OFF",
+          "mfaConfiguration": "OPTIONAL",
           "mfaTypes": "SMS Text Message",
           "smsAuthenticationMessage": "Your authentication code is {####}",
           "smsVerificationMessage": "Your verification code is {####}",
@@ -181,12 +229,22 @@
               "Arn"
             ]
           },
-          "useDefault": "default",
+          "useDefault": "manual",
           "usernameAttributes": "email",
-          "userPoolGroupList": "",
+          "userPoolGroupList": "Users,Admin",
           "serviceName": "Cognito",
           "usernameCaseSensitive": false,
           "dependsOn": "",
+          "thirdPartyAuth": false,
+          "userPoolGroups": true,
+          "adminQueries": true,
+          "triggers": "{}",
+          "hostedUI": false,
+          "adminQueryGroup": "Admin",
+          "parentStack": {
+            "Ref": "AWS::StackId"
+          },
+          "permissions": "",
           "env": "developtwo"
         }
       }
