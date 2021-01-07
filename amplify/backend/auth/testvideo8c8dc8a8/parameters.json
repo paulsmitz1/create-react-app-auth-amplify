@@ -1,12 +1,12 @@
 {
     "identityPoolName": "testvideo8c8dc8a8_identitypool_8c8dc8a8",
-    "allowUnauthenticatedIdentities": false,
+    "allowUnauthenticatedIdentities": true,
     "resourceNameTruncated": "testvi8c8dc8a8",
     "userPoolName": "testvideo8c8dc8a8_userpool_8c8dc8a8",
     "autoVerifiedAttributes": [
         "email"
     ],
-    "mfaConfiguration": "OFF",
+    "mfaConfiguration": "OPTIONAL",
     "mfaTypes": [
         "SMS Text Message"
     ],
@@ -45,12 +45,25 @@
             "Arn"
         ]
     },
-    "useDefault": "default",
+    "useDefault": "manual",
     "usernameAttributes": [
         "email"
     ],
-    "userPoolGroupList": [],
+    "userPoolGroupList": [
+        "Users",
+        "Admin"
+    ],
     "serviceName": "Cognito",
     "usernameCaseSensitive": false,
-    "dependsOn": []
+    "dependsOn": [],
+    "thirdPartyAuth": false,
+    "userPoolGroups": true,
+    "adminQueries": true,
+    "triggers": "{}",
+    "hostedUI": false,
+    "adminQueryGroup": "Admin",
+    "parentStack": {
+        "Ref": "AWS::StackId"
+    },
+    "permissions": []
 }
