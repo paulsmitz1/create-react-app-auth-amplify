@@ -67,8 +67,8 @@
         "Runtime": "nodejs10.x",
         "Timeout": "25",
         "Code": {
-          "S3Bucket": "amplify-testvideo-developtwo-172933-deployment",
-          "S3Key": "amplify-builds/AdminQueriesf4582423-4b5a62456e4869454a73-build.zip"
+          "S3Bucket": "amplify-videotest-dev-175132-deployment",
+          "S3Key": "amplify-builds/AdminQueriesf4582423-66706f71463138733944-build.zip"
         }
       }
     },

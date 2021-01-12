@@ -33,12 +33,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "CreateStreamFunction",
+            "streams",
             {
               "Fn::Join": [
                 "",
                 [
-                  "CreateStreamFunction",
+                  "streams",
                   "-",
                   {
                     "Ref": "env"
@@ -68,8 +68,8 @@
         "Layers": [],
         "Timeout": "25",
         "Code": {
-          "S3Bucket": "amplify-videotest-dev-175132-deployment",
-          "S3Key": "amplify-builds/CreateStreamFunction-645a586f7842712f6562-build.zip"
+          "S3Bucket": "amplify-testvideo-develop-153604-deployment",
+          "S3Key": "amplify-builds/streams-4b396769744447673547-build.zip"
         }
       }
     },
@@ -79,12 +79,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "testvideoLambdaRole9219b52c",
+            "testvideoLambdaRole897dff2e",
             {
               "Fn::Join": [
                 "",
                 [
-                  "testvideoLambdaRole9219b52c",
+                  "testvideoLambdaRole897dff2e",
                   "-",
                   {
                     "Ref": "env"
@@ -154,9 +154,9 @@
             {
               "Effect": "Allow",
               "Action": [
-                "mediapackage:CreateChannel",
-                "medialive:CreateChannel",
-                "cloudfront:Create"
+                "mediapackage:ListChannels",
+                "mediapackage:ListOriginEndpoints",
+                "mediapackage:ListTags"
               ],
               "Resource": "*"
             }
