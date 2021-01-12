@@ -40,6 +40,7 @@ exports.handler = async (event) => {
         {
             MaxResults: 50,
         };
+
     let mediaPackage = new AWS.MediaPackage();
     let error = null;
     let responseData = null;
@@ -70,6 +71,35 @@ exports.handler = async (event) => {
     }
 };
 
+
+function parseResponse(responseData) {
+    let response = [];
+    responseData.OriginEndpoints.forEach((currentObject) =>
+    {
+        let currentStream = response.filter((e) => {
+            return e.StreamName === currentObject.ChannelId
+        });
+        if (currentStream.length === 0) {
+            currentStream = {
+                "StreamName": currentObject.ChannelId,
+                "StreamSources": [],
+            };
+            response.push(currentStream);
+        }else{
+            currentStream = currentStream[0];
+        }
+
+        let streamSource = {
+            "StreamURL": currentObject.CmafPackage ? currentObject.CmafPackage.HlsManifests[0].Url : currentObject.Url,
+        };
+        currentStream.StreamSources.push(streamSource);
+
+    });
+    return response;
+}
+
+
+
 function http200(body) {
     return {
         statusCode: 200,
@@ -97,42 +127,4 @@ function getHeaders() {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Headers": "*"
     };
-}
-
-
-function parseResponse(responseData) {
-    console.log(JSON.stringify(responseData));
-    let response = [];
-    responseData.OriginEndpoints.forEach((currentObject) =>
-    {
-        let currentStream = response.filter((e) => {
-            return e.StreamName === currentObject.ChannelId
-        });
-        console.log("current Stream === " + JSON.stringify(currentStream));
-        if (currentStream.length === 0) {
-            currentStream = {
-                "StreamName": currentObject.ChannelId,
-                "StreamSources": [],
-            };
-            response.push(currentStream);
-        }else{
-            currentStream = currentStream[0];
-        }
-
-        console.log("actual CurrentStream = " + JSON.stringify(currentObject));
-        console.log("cmafPackage = " + JSON.stringify(currentObject.CmafPackage));
-        // console.log("currentStream.CmafPackage.HlsManifests.Url = " + JSON.stringify(currentStream.CmafPackage.HlsManifests.Url));
-        console.log("currentStream.Url = " + JSON.stringify(currentObject.Url));
-        console.log("url = " + JSON.stringify(currentObject.CmafPackage ? currentObject.CmafPackage.HlsManifests[0].Url : currentObject.Url));
-
-        let streamSource = {
-            "StreamURL": currentObject.CmafPackage ? currentObject.CmafPackage.HlsManifests[0].Url : currentObject.Url,
-        };
-        console.log("streamSource = " + JSON.stringify(streamSource));
-        currentStream.StreamSources.push(streamSource);
-
-        console.log("currentStream after adding source = " + JSON.stringify(currentStream));
-    });
-    console.log("response = " + JSON.stringify(response));
-    return response;
 }

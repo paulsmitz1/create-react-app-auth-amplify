@@ -4,7 +4,6 @@ import './App.css';
 import { withAuthenticator } from 'aws-amplify-react'
 import Amplify, { API } from 'aws-amplify';
 import awsConfig from './aws-exports';
-import awsVideoConfig from "./aws-video-exports";
 import Auth from "@aws-amplify/auth";
 import Select from 'react-select'
 import { Modal } from 'antd';
@@ -49,38 +48,45 @@ constructor() {
     super();
     this.state = { modalVisible: false }
 }
+
+//LifeCycle
     render() {
         console.log("rendering, selectedStream: " + selectedStream);
 
         return (
             <div className="App">
+
                 <video
-                    id="myplayer"
+                    id="myPlayer"
                     className="video"
                     preload="auto"
                     autoPlay={"autoplay"}
                     controls={"controls"}>
                     <source id="source" src={selectedStream}
-                            type='application/x-mpegURL'/>
-                    <p className="vjs-no-js">
-                        To view this video please enable JavaScript, and consider upgrading to a
-                        web browser that
-                        <a href="https://videojs.com/html5-video-support/" target="_blank">
-                            supports HTML5 video
-                        </a>
-                    </p>
-                </video>
-                <Select id="options" onChange={this.change.bind(this)} options={options}/>
+                            type='application/x-mpegURL'/></video>
+
+                <Select id="options" onChange={this.changeStream.bind(this)} options={options}/>
+
+
                 <Modal footer={null} align="middle" title="Title" visible={this.state.modalVisible} onOk={this.handleModalOk} onCancel={this.handleModalCancel} primary >
-                    <input type='text'
-                           ref={(input) => { this.testInput = input; }} ></input>
+                    <input id='streamName' type='text'/>
+                    <button id='submit' title='Create Stream' onClick={this.createStream} />
                 </Modal>
+
             </div>
 
         );
 
     }
 
+    componentDidMount() {
+        this.getStreams();
+        console.log(JSON.stringify(theStreams));
+        this.createOptions();
+    }
+
+
+//Modal
     handleModalOk(e) {
         console.log(e);
         this.setState({
@@ -93,20 +99,23 @@ constructor() {
             modalVisible: false,
         });
     }
-    createNewStream() {
+    showModal() {
         this.setState({
             modalVisible: true,
         });
-        console.log("create Stream");
+        console.log("show Create Modal");
     }
-    change(event) {
+
+
+//DropDown
+    changeStream(event) {
         if (event.value === "create") {
-            this.createNewStream();
+            this.showModal();
             return;
         }
         console.log("changed to " + event.value);
         selectedStream = event.value
-        let video = document.getElementById('myplayer');
+        let video = document.getElementById('myPlayer');
         video.pause();
         video.innerHTML = "";
         event.value.StreamSources.forEach(source => {
@@ -114,12 +123,6 @@ constructor() {
         });
         video.load();
         video.play();
-    }
-
-    componentDidMount() {
-        this.getStreams();
-        console.log(JSON.stringify(theStreams));
-        this.createOptions();
     }
 
     createOptions() {
@@ -144,6 +147,8 @@ constructor() {
         this.setState(options);
     }
 
+
+//API Calls
     getStreams() {
         const apiName = 'Streams';
         const path = '/Streams';
@@ -160,7 +165,20 @@ constructor() {
             this.createOptions();
         });
     }
+    async createStream() {
+        const apiName = 'CreateStream';
+        const path = '/CreateStream';
+        const myInit = {
+            headers: {
+                Authorization: 'Bearer ' + await Auth.currentSession().getIdToken().getJwtToken(),
+            },
+            body: { "name" : document.getElementById('streamName').textContent }
+        };
 
+        API.post(apiName, path, myInit).then(result => {
+            console.log(result);
+        });
+    }
 
 }
 export default withAuthenticator(App, true);

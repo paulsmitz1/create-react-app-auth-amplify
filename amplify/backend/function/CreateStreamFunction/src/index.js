@@ -1,30 +1,89 @@
-
+//
+// This lambda should:
+// Inputs:
+// {
+//   "name": "<New Stream Name>"
+// }
+//
+// What it will do:
+// Create a MediaPackage Channel
+// Create 4 egress endpoints associated with the MediaPackage Channel
+// Create a MediaLive Input Endpoint which requires:
+//      Security Group for ingress (We already have one created during the Amplify add video)
+//      Passwords In ParameterStore
+// Create a MediaLive Egress Channel
+// Connect the Media Live Egress Channel to the MediaPackage Channel
+//
+// Implementation:
+// Call mediaPackage.createChannel, parse the data down to the required information which is:
+// mediaPackage.PackageID
+// mediaPackage.HlsIngest.IngestEndpoints
+//
+// Call mediaPackage.createOriginEndpoint 4 times to create an egress endpoint for DASH, HLS, MSS, CMAF.
+//
+// Call ParameterStore.putParameter to store the passwords for each of the mediaPackage ingest endpoints
+//
+// Call mediaLive.listInputSecurityGroups to get the security group associated with the MediaLive Endpoint
+//
+// Call mediaLive.createInput parsing the responses of mediaLive.listInputSecurityGroups
+//
+// Call mediaLive.createChannel parsing the responses of mediaPackage.createChannel, mediaLive.createInput.
+//
+//  Outputs:
+//  {
+//   StreamName : text
+//   Ingest :
+//   [
+//      {
+//       Name: text
+//       Server: text
+//       Key: text
+//      }
+//   ]
+//  }
+//
 
 exports.handler = async (event) => {
     if (event.method === "OPTIONS")
     {
         return http200({});
     }
+
     let channelName = event.name;
+
     let GUID = require("guid");
     let guid = GUID.create();
+
     let mediaPackageParams = await createMediaPackageChannel(channelName,guid);
-    console.log("mediaPackageParams = " + JSON.stringify(mediaPackageParams));
-    console.log("media package created");
+
     await createEndpoints(mediaPackageParams.PackageID, guid, mediaPackageParams.MediaPackage);
-    console.log("media package endpoints created");
+
     let mediaPackageIngestEndpoints = mediaPackageParams.Response.HlsIngest.IngestEndpoints;
     for (let i = 0; i < mediaPackageIngestEndpoints.length; i++) {
         await storeStreamPasswordsInParameterStore(channelName, guid, i,mediaPackageIngestEndpoints);
     }
-    let listSecurityGroupResponse = await listInputSecurityGroup();
-    let createMediaLiveInputResponse =  await createMediaLiveInput(channelName,guid,listSecurityGroupResponse);
-    await createMediaLiveChannel(channelName, guid, mediaPackageIngestEndpoints,createMediaLiveInputResponse);
-    console.log("media live endpoints created");
 
-    return http200({ "createMediaLiveInputResponse" : createMediaLiveInputResponse });
+    let listSecurityGroupResponse = await listInputSecurityGroup();
+    let createMediaLiveInputResponse =  await createMediaLiveInput(channelName, guid, listSecurityGroupResponse);
+
+    await createMediaLiveChannel(channelName, guid, mediaPackageIngestEndpoints, createMediaLiveInputResponse);
+
+    let ingestArray = [];
+    for (let i = 0; i < createMediaLiveInputResponse.Input.Destinations.length; i++) {
+        let ingest = {
+            "Name": createMediaLiveInputResponse.Input.Destinations[i].Url.substring(createMediaLiveInputResponse.Input.Destinations[i].Url.lastIndexOf('/') + 1),
+            "Server": createMediaLiveInputResponse.Input.Destinations[i].Url,
+            "Key": createMediaLiveInputResponse.Input.Destinations[i].Url.substring(createMediaLiveInputResponse.Input.Destinations[i].Url.lastIndexOf('/') + 1),
+        }
+        ingestArray.push(ingest);
+    }
+    return http200( {
+                    "StreamName" : channelName,
+                    "Ingest" : ingestArray,
+                    });
 };
 
+//Parameter Store
 async function storeStreamPasswordsInParameterStore(channelName, guid, keyNumber, mediaPackageIngestEndpoints)
 {
     let AWS = require("aws-sdk");
@@ -53,8 +112,9 @@ async function storeStreamPasswordsInParameterStore(channelName, guid, keyNumber
         });
     await promise;
 }
-
-async function listInputSecurityGroup() {
+//Security Groups
+async function listInputSecurityGroup()
+{
     let AWS = require("aws-sdk");
     AWS.config.update({region: "us-east-1"});
     let mediaLive = new AWS.MediaLive();
@@ -63,17 +123,17 @@ async function listInputSecurityGroup() {
     promise.then(
         function (data) {
             response = data;
-            console.log("List SecurityGroup Response = " + JSON.stringify(data));
         },
-        function (error)
-        {
+        function (error) {
 
         });
     await promise;
     return response;
 }
 
-async function createMediaLiveInput(channelName, guid, listSecurityGroupsResponse){
+//MediaLive
+async function createMediaLiveInput(channelName, guid, listSecurityGroupsResponse)
+{
     let AWS = require("aws-sdk");
     AWS.config.update({region: "us-east-1"});
 
@@ -111,7 +171,8 @@ async function createMediaLiveInput(channelName, guid, listSecurityGroupsRespons
     await promise;
     return response;
 }
-async function createMediaLiveChannel(channelName, guid,mediaPackageIngestEndpoints, createMediaLiveInputResponse) {
+async function createMediaLiveChannel(channelName, guid,mediaPackageIngestEndpoints, createMediaLiveInputResponse)
+{
     let AWS = require("aws-sdk");
     AWS.config.update({region: "us-east-1"});
 
@@ -142,29 +203,7 @@ async function createMediaLiveChannel(channelName, guid,mediaPackageIngestEndpoi
 
             ],
             "EncoderSettings": {
-                "AudioDescriptions": [
-                    // {
-                    //     "AudioSelectorName": "audio-selector-1",
-                    //     "Name": "audio_128k",
-                    //     "AudioTypeControl": "FOLLOW_INPUT",
-                    //     "CodecSettings": {
-                    //         "AacSettings": {
-                    //             "Bitrate": 128000,
-                    //             "CodingMode": "CODING_MODE_2_0",
-                    //             "InputType": "NORMAL",
-                    //             "Profile": "LC",
-                    //             "RateControlMode": "CBR",
-                    //             "RawFormat": "NONE",
-                    //             "SampleRate": 48000,
-                    //             "Spec": "MPEG4"
-                    //
-                    //         }
-                    //     },
-                    //     "LanguageCodeControl": "FOLLOW_INPUT"
-                    //
-                    // },
-
-                ],
+                "AudioDescriptions": [],
                 "OutputGroups": [
                     {
                         "OutputGroupSettings": {
@@ -213,10 +252,6 @@ async function createMediaLiveChannel(channelName, guid,mediaPackageIngestEndpoi
                                     "OutputSettings": {
                                         "HlsOutputSettings": {
                                             "HlsSettings": {
-                                                // "AudioOnlyHlsSettings": {
-                                                //     "AudioTrackType": "ALTERNATE_AUDIO_NOT_AUTO_SELECT"
-                                                //
-                                                // },
                                                 "StandardHlsSettings": {
                                                     "M3u8Settings": {
                                                         "AudioFramesPerPes": 4,
@@ -305,18 +340,7 @@ async function createMediaLiveChannel(channelName, guid,mediaPackageIngestEndpoi
 
                     }
                 },
-                "CaptionDescriptions": [
-                    // {
-                    //     "CaptionSelectorName": "caption-selector-1",
-                    //     "Name": "caption_webvtt",
-                    //     "DestinationSettings": {
-                    //         "WebvttDestinationSettings": {}
-                    //     },
-                    //
-                    // },
-
-                ],
-
+                "CaptionDescriptions": [],
             },
             "InputAttachments": [
                 {
@@ -369,26 +393,24 @@ async function createMediaLiveChannel(channelName, guid,mediaPackageIngestEndpoi
             }
         };
 
-    console.log("Create Channel Request = " + JSON.stringify(createMediaLiveChannelRequest));
 
     let response;
 
     let promise = mediaLive.createChannel(createMediaLiveChannelRequest).promise();
     promise.then(
         function (data) {
-            console.log("Create Channel Response = " + JSON.stringify(data));
             response = data;
         },
-        function (error)
-        {
-            console.log("create Channel Response = " + JSON.stringify(error));
-
+        function (error) {
         });
     await promise;
 
 }
+
+
 //MediaPackage Channel
-async function createMediaPackageChannel(channelName, guid) {
+async function createMediaPackageChannel(channelName, guid)
+{
     let AWS = require("aws-sdk");
     AWS.config.update({region:"us-east-1"});
 
@@ -420,9 +442,9 @@ async function createMediaPackageChannel(channelName, guid) {
 }
 
 
-
 //Endpoints
-async function createEndpoints(packageID, guid, mediaPackage) {
+async function createEndpoints(packageID, guid, mediaPackage)
+{
     console.log("About to create DASH");
     await createDashEndpoint(packageID, guid, mediaPackage);
     console.log("About to create HLS");
@@ -433,22 +455,8 @@ async function createEndpoints(packageID, guid, mediaPackage) {
     await createMSSEndpoint(packageID, guid, mediaPackage);
 
 }
-
-async function originEndpointRequest(mediaPackage, createOriginEndpointRequest) {
-    console.log("About to create origin request with: " + JSON.stringify(createOriginEndpointRequest));
-    let promise = mediaPackage.createOriginEndpoint(createOriginEndpointRequest).promise();
-    promise.then(
-        function (data) {
-            console.log("Create Endpoint Response = " + JSON.stringify(data));
-        },
-        function (error)
-        {
-
-        });
-    await promise;
-}
-
-async function createDashEndpoint(packageID, guid, mediaPackage) {
+async function createDashEndpoint(packageID, guid, mediaPackage)
+{
     let createDashOriginEndpointRequest = {
         "Id": packageID + guid + "-dash",
         "ChannelId": packageID,
@@ -484,7 +492,8 @@ async function createDashEndpoint(packageID, guid, mediaPackage) {
     };
     await originEndpointRequest(mediaPackage, createDashOriginEndpointRequest);
 }
-async function createHLSEndpoint(packageID, guid, mediaPackage) {
+async function createHLSEndpoint(packageID, guid, mediaPackage)
+{
     let createHLSOriginEndpointRequest = {
         "Id": packageID + guid + "-hls",
         "ChannelId": packageID,
@@ -519,7 +528,8 @@ async function createHLSEndpoint(packageID, guid, mediaPackage) {
     await originEndpointRequest(mediaPackage, createHLSOriginEndpointRequest);
 
 }
-async function createMSSEndpoint(packageID, guid, mediaPackage) {
+async function createMSSEndpoint(packageID, guid, mediaPackage)
+{
     let createMSSOriginEndpointRequest = {
         "Id": packageID + guid + "-mss",
         "ChannelId": packageID,
@@ -540,7 +550,8 @@ async function createMSSEndpoint(packageID, guid, mediaPackage) {
 
     await originEndpointRequest(mediaPackage, createMSSOriginEndpointRequest);
 }
-async function createCMAFEndpoint(packageID, guid, mediaPackage) {
+async function createCMAFEndpoint(packageID, guid, mediaPackage)
+{
     let createCMAFOriginEndpointRequest = {
         "Id": packageID + guid + "-cmaf",
         "ChannelId": packageID,
@@ -578,6 +589,20 @@ async function createCMAFEndpoint(packageID, guid, mediaPackage) {
     await originEndpointRequest(mediaPackage, createCMAFOriginEndpointRequest);
 }
 
+async function originEndpointRequest(mediaPackage, createOriginEndpointRequest)
+{
+    console.log("About to create origin request with: " + JSON.stringify(createOriginEndpointRequest));
+    let promise = mediaPackage.createOriginEndpoint(createOriginEndpointRequest).promise();
+    promise.then(
+        function (data) {
+            console.log("Create Endpoint Response = " + JSON.stringify(data));
+        },
+        function (error)
+        {
+
+        });
+    await promise;
+}
 
 //Return Types
 
@@ -588,7 +613,6 @@ function http200(body) {
         body: JSON.stringify(body)
     };
 }
-
 function http400() {
     return {
         statusCode: 400,
