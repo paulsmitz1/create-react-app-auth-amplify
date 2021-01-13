@@ -9,6 +9,14 @@
     },
     "env": {
       "Type": "String"
+    },
+    "apiStreamsApiName": {
+      "Type": "String",
+      "Default": "apiStreamsApiName"
+    },
+    "apiStreamsApiId": {
+      "Type": "String",
+      "Default": "apiStreamsApiId"
     }
   },
   "Conditions": {
@@ -55,6 +63,12 @@
             },
             "REGION": {
               "Ref": "AWS::Region"
+            },
+            "API_STREAMS_APINAME": {
+              "Ref": "apiStreamsApiName"
+            },
+            "API_STREAMS_APIID": {
+              "Ref": "apiStreamsApiId"
             }
           }
         },
@@ -69,7 +83,7 @@
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-videotest-dev-175132-deployment",
-          "S3Key": "amplify-builds/StreamsFunction-7475396f71637942756e-build.zip"
+          "S3Key": "amplify-builds/StreamsFunction-71786a37584f65494571-build.zip"
         }
       }
     },

@@ -17,37 +17,9 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda",
       "dependsOn": []
-    },
-    "AdminQueriesf4582423": {
-      "service": "Lambda",
-      "providerPlugin": "awscloudformation",
-      "build": true,
-      "dependsOn": [
-        {
-          "category": "auth",
-          "resourceName": "testvideo8c8dc8a8",
-          "attributes": [
-            "UserPoolId"
-          ]
-        }
-      ]
     }
   },
   "api": {
-    "CreateStream": {
-      "service": "API Gateway",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": [
-        {
-          "category": "function",
-          "resourceName": "CreateStreamFunction",
-          "attributes": [
-            "Name",
-            "Arn"
-          ]
-        }
-      ]
-    },
     "Streams": {
       "service": "API Gateway",
       "providerPlugin": "awscloudformation",
@@ -62,50 +34,27 @@
         }
       ]
     },
-    "AdminQueries": {
+    "CreateStream": {
       "service": "API Gateway",
       "providerPlugin": "awscloudformation",
       "dependsOn": [
         {
-          "category": "auth",
-          "resourceName": "testvideo8c8dc8a8",
-          "attributes": [
-            "UserPoolId"
-          ]
-        },
-        {
           "category": "function",
-          "resourceName": "AdminQueriesf4582423",
+          "resourceName": "CreateStreamFunction",
           "attributes": [
-            "Arn",
-            "Name"
+            "Name",
+            "Arn"
           ]
         }
       ]
     }
   },
   "auth": {
-    "testvideo8c8dc8a8": {
+    "videotest4a87c5df4a87c5df": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],
       "customAuth": false
-    },
-    "userPoolGroups": {
-      "service": "Cognito-UserPool-Groups",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": [
-        {
-          "category": "auth",
-          "resourceName": "testvideo8c8dc8a8",
-          "attributes": [
-            "UserPoolId",
-            "AppClientIDWeb",
-            "AppClientID",
-            "IdentityPoolId"
-          ]
-        }
-      ]
     }
   },
   "video": {

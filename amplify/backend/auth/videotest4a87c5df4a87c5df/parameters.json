@@ -1,12 +1,12 @@
 {
-    "identityPoolName": "testvideo8c8dc8a8_identitypool_8c8dc8a8",
-    "allowUnauthenticatedIdentities": true,
-    "resourceNameTruncated": "testvi8c8dc8a8",
-    "userPoolName": "testvideo8c8dc8a8_userpool_8c8dc8a8",
+    "identityPoolName": "videotest4a87c5df_identitypool_4a87c5df",
+    "allowUnauthenticatedIdentities": false,
+    "resourceNameTruncated": "videot4a87c5df",
+    "userPoolName": "videotest4a87c5df_userpool_4a87c5df",
     "autoVerifiedAttributes": [
         "email"
     ],
-    "mfaConfiguration": "OPTIONAL",
+    "mfaConfiguration": "OFF",
     "mfaTypes": [
         "SMS Text Message"
     ],
@@ -28,10 +28,10 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "testvi8c8dc8a8_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "videot4a87c5df_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "8c8dc8a8",
-    "resourceName": "testvideo8c8dc8a8",
+    "sharedId": "4a87c5df",
+    "resourceName": "videotest4a87c5df4a87c5df",
     "authSelections": "identityPoolAndUserPool",
     "authRoleArn": {
         "Fn::GetAtt": [
@@ -45,25 +45,17 @@
             "Arn"
         ]
     },
-    "useDefault": "manual",
-    "usernameAttributes": [
-        "email"
-    ],
-    "userPoolGroupList": [
-        "Users",
-        "Admin"
-    ],
-    "serviceName": "Cognito",
-    "usernameCaseSensitive": false,
-    "dependsOn": [],
-    "thirdPartyAuth": false,
-    "userPoolGroups": true,
-    "adminQueries": true,
+    "useDefault": "default",
+    "userPoolGroups": false,
+    "adminQueries": false,
     "triggers": "{}",
     "hostedUI": false,
-    "adminQueryGroup": "Admin",
+    "userPoolGroupList": [],
+    "serviceName": "Cognito",
+    "usernameCaseSensitive": false,
     "parentStack": {
         "Ref": "AWS::StackId"
     },
-    "permissions": []
+    "permissions": [],
+    "dependsOn": []
 }

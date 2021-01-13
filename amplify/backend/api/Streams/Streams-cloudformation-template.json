@@ -14,15 +14,15 @@
         },
     
     
-          "functionCreateStreamFunctionName": {
+          "functionStreamsFunctionName": {
             "Type": "String",
-            "Default": "functionCreateStreamFunctionName"
+            "Default": "functionStreamsFunctionName"
           },
         
           
-          "functionCreateStreamFunctionArn": {
+          "functionStreamsFunctionArn": {
             "Type": "String",
-            "Default": "functionCreateStreamFunctionArn"
+            "Default": "functionStreamsFunctionArn"
           }
         
           
@@ -45,16 +45,16 @@
         
         
         
-      "CreateStream": {
+      "Streams": {
         "Type": "AWS::ApiGateway::RestApi",
         "Properties": {
           "Description": "",
-          "Name": "CreateStream",
+          "Name": "Streams",
           "Body": {
             "swagger": "2.0",
             "info": {
               "version": "2018-05-24T17:52:00Z",
-              "title": "CreateStream"
+              "title": "Streams"
             },
             "host": {
                 "Fn::Join": [
@@ -90,7 +90,7 @@
             ],
             "paths": {
               
-              "/CreateStream": {
+              "/Streams": {
                 "options": {
                   "consumes": [
                     "application/json"
@@ -176,7 +176,7 @@
                             
                             {
                                 
-                                "Ref": "functionCreateStreamFunctionArn"
+                                "Ref": "functionStreamsFunctionArn"
                             },
                             
                             "/invocations"
@@ -189,7 +189,7 @@
                   }
                 }
               },
-              "/CreateStream/{proxy+}": {
+              "/Streams/{proxy+}": {
                 "options": {
                   "consumes": [
                     "application/json"
@@ -275,7 +275,7 @@
                           
                           {
                             
-                            "Ref": "functionCreateStreamFunctionArn"
+                            "Ref": "functionStreamsFunctionArn"
                           },
                           
                           "/invocations"
@@ -332,12 +332,12 @@
                   
         
         
-        "functionCreateStreamFunctionPermissionCreateStream": {
+        "functionStreamsFunctionPermissionStreams": {
             "Type": "AWS::Lambda::Permission",
             "Properties": {
                 "FunctionName": 
                     {
-                        "Ref":  "functionCreateStreamFunctionName"
+                        "Ref":  "functionStreamsFunctionName"
                     },
                     
                     "Action": "lambda:InvokeFunction",
@@ -356,7 +356,7 @@
                             },
                             ":",
                             {
-                                "Ref": "CreateStream"
+                                "Ref": "Streams"
                             },
                             "/*/*/*"
                         ]
@@ -367,7 +367,7 @@
         
         
         
-      "DeploymentAPIGWCreateStream": {
+      "DeploymentAPIGWStreams": {
         "Type": "AWS::ApiGateway::Deployment",
         "Properties": {
           "Description": "The Development stage deployment of your API.",
@@ -381,7 +381,7 @@
             ]
           },
           "RestApiId": {
-            "Ref": "CreateStream"
+            "Ref": "Streams"
           }
         }
       }
@@ -389,15 +389,15 @@
     "Outputs": {
         "RootUrl": {
             "Description": "Root URL of the API gateway",
-            "Value": {"Fn::Join": ["", ["https://", {"Ref": "CreateStream"}, ".execute-api.", {"Ref": "AWS::Region"}, ".amazonaws.com/", {"Fn::If": ["ShouldNotCreateEnvResources","Prod", {"Ref": "env"} ]}]]}
+            "Value": {"Fn::Join": ["", ["https://", {"Ref": "Streams"}, ".execute-api.", {"Ref": "AWS::Region"}, ".amazonaws.com/", {"Fn::If": ["ShouldNotCreateEnvResources","Prod", {"Ref": "env"} ]}]]}
         },
         "ApiName": {
           "Description": "API Friendly name",
-          "Value": "CreateStream"
+          "Value": "Streams"
         },
         "ApiId": {
           "Description": "API ID (prefix of API URL)",
-          "Value": {"Ref": "CreateStream"}
+          "Value": {"Ref": "Streams"}
         }
     }
   }

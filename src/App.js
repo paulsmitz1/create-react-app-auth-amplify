@@ -1,7 +1,7 @@
 //Imports
 import React, { Component, useState } from 'react';
 import './App.css';
-import { withAuthenticator } from 'aws-amplify-react'
+import { withAuthenticator } from '@aws-amplify/ui-react';
 import Amplify, { API } from 'aws-amplify';
 import awsConfig from './aws-exports';
 import Auth from "@aws-amplify/auth";
@@ -71,6 +71,7 @@ constructor() {
                 <Modal footer={null} align="middle" title="Title" visible={this.state.modalVisible} onOk={this.handleModalOk} onCancel={this.handleModalCancel} primary >
                     <input id='streamName' type='text'/>
                     <button id='submit' title='Create Stream' onClick={this.createStream} />
+                    <div id='result'></div>
                 </Modal>
 
             </div>
@@ -165,18 +166,30 @@ constructor() {
             this.createOptions();
         });
     }
-    async createStream() {
+     createStream() {
         const apiName = 'CreateStream';
         const path = '/CreateStream';
         const myInit = {
             headers: {
-                Authorization: 'Bearer ' + await Auth.currentSession().getIdToken().getJwtToken(),
+                Authorization: 'Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}',
             },
-            body: { "name" : document.getElementById('streamName').textContent }
+            body: { "name" : document.getElementById('streamName').value }
         };
 
         API.post(apiName, path, myInit).then(result => {
             console.log(result);
+            let resultDiv = document.getElementById("result");
+            let newContent = "<p>Successfully created Stream " + result.StreamName + "</p>";
+            newContent = newContent + "<p> you can use the following settings in OBS to start streaming </p>";
+
+            //    {StreamName: "testing1234", Ingest: [{Name: "testing1234268568b4-3b04-cb42-533e-2d4ff4bf355d-input-P", Server: "rtmp://3.231.128.60:1935/testing1234268568b4-3b04-cb42-533e-2d4ff4bf355d-input-P", Key: "testing1234268568b4-3b04-cb42-533e-2d4ff4bf355d-input-P"}, {Name: "testing1234268568b4-3b04-cb42-533e-2d4ff4bf355d-input-B", Server: "rtmp://54.208.187.88:1935/testing1234268568b4-3b04-cb42-533e-2d4ff4bf355d-input-B", Key: "testing1234268568b4-3b04-cb42-533e-2d4ff4bf355d-input-B"}]}
+            for (let i = 0; i < result.Ingest.length; i++) {
+                newContent = newContent + "<p>Endpoint Name:" + result.Ingest[i].Name + "</p>";
+                newContent = newContent + "<p>Server:" + result.Ingest[i].Server + "</p>";
+                newContent = newContent + "<p>Key:" + result.Ingest[i].Key + "</p>";
+            }
+
+            resultDiv.innerHTML = newContent;
         });
     }
 

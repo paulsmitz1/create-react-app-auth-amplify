@@ -1,27 +1,26 @@
 {
-    "dev": {
-        "awscloudformation": {
-            "AuthRoleName": "amplify-videotest-dev-175132-authRole",
-            "UnauthRoleArn": "arn:aws:iam::569327773807:role/amplify-videotest-dev-175132-unauthRole",
-            "AuthRoleArn": "arn:aws:iam::569327773807:role/amplify-videotest-dev-175132-authRole",
-            "Region": "us-east-1",
-            "DeploymentBucketName": "amplify-videotest-dev-175132-deployment",
-            "UnauthRoleName": "amplify-videotest-dev-175132-unauthRole",
-            "StackName": "amplify-videotest-dev-175132",
-            "StackId": "arn:aws:cloudformation:us-east-1:569327773807:stack/amplify-videotest-dev-175132/d059bb20-54fe-11eb-a741-0ae6cf5d268f",
-            "AmplifyAppId": "d93yydumxky6x"
-        },
-        "categories": {
-            "auth": {
-                "testvideo8c8dc8a8": {},
-                "userPoolGroups": {}
-            },
-            "hosting": {
-                "amplifyhosting": {
-                    "appId": "d93yydumxky6x",
-                    "type": "cicd"
-                }
-            }
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-videotest-dev-175132-authRole",
+      "UnauthRoleArn": "arn:aws:iam::569327773807:role/amplify-videotest-dev-175132-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::569327773807:role/amplify-videotest-dev-175132-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-videotest-dev-175132-deployment",
+      "UnauthRoleName": "amplify-videotest-dev-175132-unauthRole",
+      "StackName": "amplify-videotest-dev-175132",
+      "StackId": "arn:aws:cloudformation:us-east-1:569327773807:stack/amplify-videotest-dev-175132/d059bb20-54fe-11eb-a741-0ae6cf5d268f",
+      "AmplifyAppId": "d93yydumxky6x"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d93yydumxky6x",
+          "type": "cicd"
         }
+      },
+      "auth": {
+        "videotest4a87c5df4a87c5df": {}
+      }
     }
+  }
 }

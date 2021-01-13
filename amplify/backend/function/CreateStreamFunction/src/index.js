@@ -49,7 +49,15 @@ exports.handler = async (event) => {
         return http200({});
     }
 
-    let channelName = event.name;
+    if (event.body == null) {
+        return http400();
+    }
+    let body = JSON.parse(event.body)
+    let channelName = body.name;
+
+    if (!channelName){
+        return http400();
+    }
 
     let GUID = require("guid");
     let guid = GUID.create();
@@ -95,7 +103,7 @@ async function storeStreamPasswordsInParameterStore(channelName, guid, keyNumber
         "Name": channelName + guid + "-mediaPackage-Ingest-Key-" + keyNumber,
         "Tags": [{
             "Key":"ChannelName",
-            "Value":channelName
+            "Value":channelName ? channelName : "NoValue"
         }],
         "Tier": "Standard",
         "Type": "SecureString",
@@ -141,7 +149,7 @@ async function createMediaLiveInput(channelName, guid, listSecurityGroupsRespons
     let mediaLive = new AWS.MediaLive();
     let createMediaLiveInputRequest = {
         "Name": channelName + guid + "-input",
-        "RoleArn": "arn:aws:iam::569327773807:role/service-role/defaultStream-developtwo-medialive-access-role-us-east-1",
+        "RoleArn": "arn:aws:iam::569327773807:role/service-role/defaultStream-dev-medialive-access-role-us-east-1",
         "InputSecurityGroups": [ listSecurityGroupsResponse.InputSecurityGroups[0].Id ],
         "Tags": {
             "ChannelName": channelName
@@ -387,7 +395,7 @@ async function createMediaLiveChannel(channelName, guid,mediaPackageIngestEndpoi
             ],
             "LogLevel": "DISABLED",
             "Name": channelName,
-            "RoleArn": "arn:aws:iam::569327773807:role/service-role/defaultStream-developtwo-medialive-access-role-us-east-1",
+            "RoleArn": "arn:aws:iam::569327773807:role/service-role/defaultStream-dev-medialive-access-role-us-east-1",
             "Tags": {
                 "ChannelName": channelName
             }
