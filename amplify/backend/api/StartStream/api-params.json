@@ -1,0 +1,35 @@
+{
+    "paths": [
+        {
+            "name": "/StartStream",
+            "lambdaFunction": "StartStreamFunction",
+            "privacy": {
+                "open": true
+            },
+            "policyResourceName": "/StartStream"
+        }
+    ],
+    "resourceName": "StartStream",
+    "apiName": "StartStream",
+    "functionArns": [
+        {
+            "lambdaFunction": "StartStreamFunction"
+        }
+    ],
+    "privacy": {
+        "auth": 0,
+        "unauth": 0,
+        "authRoleName": "amplify-videotest-dev-175132-authRole",
+        "unAuthRoleName": "amplify-videotest-dev-175132-unauthRole"
+    },
+    "dependsOn": [
+        {
+            "category": "function",
+            "resourceName": "StartStreamFunction",
+            "attributes": [
+                "Name",
+                "Arn"
+            ]
+        }
+    ]
+}

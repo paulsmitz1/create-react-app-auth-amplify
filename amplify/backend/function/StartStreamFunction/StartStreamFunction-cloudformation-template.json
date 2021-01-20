@@ -33,12 +33,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "CreateStreamFunction",
+            "StartStreamFunction",
             {
               "Fn::Join": [
                 "",
                 [
-                  "CreateStreamFunction",
+                  "StartStreamFunction",
                   "-",
                   {
                     "Ref": "env"
@@ -69,7 +69,7 @@
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-videotest-dev-175132-deployment",
-          "S3Key": "amplify-builds/CreateStreamFunction-4376716155786b785a4f-build.zip"
+          "S3Key": "amplify-builds/StartStreamFunction-725661566a47446a7752-build.zip"
         }
       }
     },
@@ -79,12 +79,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "testvideoLambdaRole9219b52c",
+            "videotestLambdaRolebe4f9d37",
             {
               "Fn::Join": [
                 "",
                 [
-                  "testvideoLambdaRole9219b52c",
+                  "videotestLambdaRolebe4f9d37",
                   "-",
                   {
                     "Ref": "env"
@@ -150,40 +150,6 @@
                   }
                 ]
               }
-            },
-            {
-              "Effect": "Allow",
-              "Action": [
-                "mediapackage:CreateChannel",
-                "mediapackage:TagResource",
-                "mediapackage:CreateOriginEndpoint"
-              ],
-              "Resource": "*"
-            },
-            {
-              "Effect": "Allow",
-              "Action": [
-                "ssm:PutParameter",
-                "ssm:AddTagsToResource"
-              ],
-              "Resource": "*"
-            },
-            {
-              "Effect": "Allow",
-              "Action": [
-                "medialive:CreateChannel",
-                "medialive:ListInputSecurityGroups",
-                "medialive:CreateInput",
-                "medialive:TagResource"
-              ],
-              "Resource": "*"
-            },
-            {
-              "Effect": "Allow",
-              "Action": [
-                "iam:PassRole"
-              ],
-              "Resource": "*"
             }
           ]
         }
