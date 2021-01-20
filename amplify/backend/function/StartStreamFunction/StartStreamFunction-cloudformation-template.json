@@ -130,6 +130,13 @@
             {
               "Effect": "Allow",
               "Action": [
+                "medialive:startChannel",
+              ],
+              "Resource": "*"
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
                 "logs:CreateLogGroup",
                 "logs:CreateLogStream",
                 "logs:PutLogEvents"
