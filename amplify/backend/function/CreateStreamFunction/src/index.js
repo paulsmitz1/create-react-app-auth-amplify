@@ -31,6 +31,7 @@
 //
 //  Outputs:
 //  {
+//   Id : text
 //   StreamName : text
 //   Ingest :
 //   [
@@ -74,7 +75,7 @@ exports.handler = async (event) => {
     let listSecurityGroupResponse = await listInputSecurityGroup();
     let createMediaLiveInputResponse =  await createMediaLiveInput(channelName, guid, listSecurityGroupResponse);
 
-    await createMediaLiveChannel(channelName, guid, mediaPackageIngestEndpoints, createMediaLiveInputResponse);
+    let createChannel = await createMediaLiveChannel(channelName, guid, mediaPackageIngestEndpoints, createMediaLiveInputResponse);
 
     let ingestArray = [];
     for (let i = 0; i < createMediaLiveInputResponse.Input.Destinations.length; i++) {
@@ -86,6 +87,7 @@ exports.handler = async (event) => {
         ingestArray.push(ingest);
     }
     return http200( {
+                    "Id" : createChannel.Channel.Id,
                     "StreamName" : channelName,
                     "Ingest" : ingestArray,
                     });
@@ -412,7 +414,7 @@ async function createMediaLiveChannel(channelName, guid,mediaPackageIngestEndpoi
         function (error) {
         });
     await promise;
-
+    return response;
 }
 
 

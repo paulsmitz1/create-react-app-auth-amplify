@@ -190,8 +190,23 @@ constructor() {
             }
 
             resultDiv.innerHTML = newContent;
+
+            this.startStream(result.Id);
         });
     }
 
+    startStream(channelId) {
+        const apiName = 'CreateStream';
+        const path = '/CreateStream';
+        const myInit = {
+            headers: {
+                Authorization: 'Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}',
+            },
+            body: {"ChannelId": channelId }
+        };
+        API.post(apiName, path, myInit).then(result => {
+
+        });
+    }
 }
 export default withAuthenticator(App, true);
