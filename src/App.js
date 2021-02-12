@@ -43,6 +43,20 @@ Amplify.configure(awsConfig);
 
 //Components
 
+function startStream(channelId) {
+    const apiName = 'StartStream';
+    const path = '/StartStream';
+    const myInit = {
+        headers: {
+            Authorization: 'Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}',
+        },
+        body: {"ChannelId": channelId }
+    };
+    API.post(apiName, path, myInit).then(result => {
+
+    });
+}
+
 class App extends Component {
 constructor() {
     super();
@@ -88,13 +102,13 @@ constructor() {
 
 
 //Modal
-    handleModalOk(e) {
+    handleModalOk = (e) => {
         console.log(e);
         this.setState({
             modalVisible: false,
         });
     }
-    handleModalCancel(e) {
+    handleModalCancel = (e) => {
         console.log(e);
         this.setState({
             modalVisible: false,
@@ -166,47 +180,32 @@ constructor() {
             this.createOptions();
         });
     }
-     createStream() {
-        const apiName = 'CreateStream';
-        const path = '/CreateStream';
-        const myInit = {
-            headers: {
-                Authorization: 'Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}',
-            },
-            body: { "name" : document.getElementById('streamName').value }
-        };
+    createStream = () => {
+         const apiName = 'CreateStream';
+         const path = '/CreateStream';
+         const myInit = {
+             headers: {
+                 Authorization: 'Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}',
+             },
+             body: {"name": document.getElementById('streamName').value}
+         };
 
-        API.post(apiName, path, myInit).then(result => {
-            console.log(result);
-            let resultDiv = document.getElementById("result");
-            let newContent = "<p>Successfully created Stream " + result.StreamName + "</p>";
-            newContent = newContent + "<p> you can use the following settings in OBS to start streaming </p>";
+         API.post(apiName, path, myInit).then(result => {
+             console.log(result);
+             let resultDiv = document.getElementById("result");
+             let newContent = "<p>Successfully created Stream " + result.StreamName + "</p>";
+             newContent = newContent + "<p> you can use the following settings in OBS to start streaming </p>";
 
-            //    {StreamName: "testing1234", Ingest: [{Name: "testing1234268568b4-3b04-cb42-533e-2d4ff4bf355d-input-P", Server: "rtmp://3.231.128.60:1935/testing1234268568b4-3b04-cb42-533e-2d4ff4bf355d-input-P", Key: "testing1234268568b4-3b04-cb42-533e-2d4ff4bf355d-input-P"}, {Name: "testing1234268568b4-3b04-cb42-533e-2d4ff4bf355d-input-B", Server: "rtmp://54.208.187.88:1935/testing1234268568b4-3b04-cb42-533e-2d4ff4bf355d-input-B", Key: "testing1234268568b4-3b04-cb42-533e-2d4ff4bf355d-input-B"}]}
-            for (let i = 0; i < result.Ingest.length; i++) {
-                newContent = newContent + "<p>Endpoint Name:" + result.Ingest[i].Name + "</p>";
-                newContent = newContent + "<p>Server:" + result.Ingest[i].Server + "</p>";
-                newContent = newContent + "<p>Key:" + result.Ingest[i].Key + "</p>";
-            }
+             //    {StreamName: "testing1234", Ingest: [{Name: "testing1234268568b4-3b04-cb42-533e-2d4ff4bf355d-input-P", Server: "rtmp://3.231.128.60:1935/testing1234268568b4-3b04-cb42-533e-2d4ff4bf355d-input-P", Key: "testing1234268568b4-3b04-cb42-533e-2d4ff4bf355d-input-P"}, {Name: "testing1234268568b4-3b04-cb42-533e-2d4ff4bf355d-input-B", Server: "rtmp://54.208.187.88:1935/testing1234268568b4-3b04-cb42-533e-2d4ff4bf355d-input-B", Key: "testing1234268568b4-3b04-cb42-533e-2d4ff4bf355d-input-B"}]}
+             for (let i = 0; i < result.Ingest.length; i++) {
+                 newContent = newContent + "<p>Endpoint Name:" + result.Ingest[i].Name + "</p>";
+                 newContent = newContent + "<p>Server:" + result.Ingest[i].Server + "</p>";
+                 newContent = newContent + "<p>Key:" + result.Ingest[i].Key + "</p>";
+             }
 
-            resultDiv.innerHTML = newContent;
-
-            this.startStream(result.Id);
-        });
-    }
-
-    startStream(channelId) {
-        const apiName = 'CreateStream';
-        const path = '/CreateStream';
-        const myInit = {
-            headers: {
-                Authorization: 'Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}',
-            },
-            body: {"ChannelId": channelId }
-        };
-        API.post(apiName, path, myInit).then(result => {
-
-        });
-    }
+             resultDiv.innerHTML = newContent;
+             startStream(result.Id);
+         });
+     }
 }
 export default withAuthenticator(App, true);

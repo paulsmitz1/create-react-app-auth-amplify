@@ -10,7 +10,7 @@ exports.handler = async (event) => {
     }
 
     let body = JSON.parse(event.body)
-    let channelId = body.channelId;
+    let channelId = body.ChannelId;
 
 
     let AWS = require("aws-sdk");
